@@ -4,10 +4,10 @@ import { Rol, useAuth } from '../auth/AuthContext';
 // Cada módulo declara qué roles lo ven (según la sección "Roles de acceso" del PDF).
 const MENU: { to: string; label: string; roles: Rol[] }[] = [
   { to: '/panel', label: 'Panel general', roles: ['Admin', 'RRHH', 'Jefe', 'Empleado'] },
-  { to: '/empleados', label: 'Empleados', roles: ['RRHH', 'Jefe'] },
+  { to: '/empleados', label: 'Empleados', roles: ['Admin', 'RRHH', 'Jefe'] },
   { to: '/asistencia', label: 'Asistencia', roles: ['RRHH', 'Jefe', 'Empleado'] },
   { to: '/ausencias', label: 'Ausencias', roles: ['RRHH', 'Jefe', 'Empleado'] },
-  { to: '/nomina', label: 'Nómina', roles: ['RRHH', 'Empleado'] },
+  { to: '/nomina', label: 'Nómina', roles: ['Admin', 'RRHH', 'Empleado'] },
   { to: '/reclutamiento', label: 'Reclutamiento', roles: ['RRHH'] },
   { to: '/evaluaciones', label: 'Evaluaciones', roles: ['RRHH', 'Jefe'] },
   { to: '/reportes', label: 'Reportes', roles: ['Admin', 'RRHH', 'Jefe'] },

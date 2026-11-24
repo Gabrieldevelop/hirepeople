@@ -374,7 +374,7 @@ GO
    ===================================================================== */
 
 INSERT INTO dbo.Roles (nombre, descripcion) VALUES
-    ('Administrador', 'Configuracion, usuarios, catalogos y auditoria'),
+    ('Admin',         'Configuracion, usuarios, catalogos y auditoria'),
     ('RRHH',          'Empleados, asistencia, nomina, reclutamiento y reportes'),
     ('Jefe',          'Su equipo; aprueba ausencias y registra evaluaciones'),
     ('Empleado',      'Su ficha, marcas de asistencia, solicitudes y recibos');

@@ -1,0 +1,2117 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Sistema de Gestión de Recursos Humanos",
+    "version": "0.1.0",
+    "description": "Contrato propuesto a partir de la maqueta del Grupo 6. Los roles de cada operación se documentan en x-roles."
+  },
+  "servers": [
+    {
+      "url": "https://api.empresa.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Valida credenciales y devuelve token de acceso y refresh token",
+        "operationId": "post_api_auth_login",
+        "x-roles": "Público",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Creado"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Renueva el token de acceso con el refresh token",
+        "operationId": "post_api_auth_refresh",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Revoca el refresh token activo",
+        "operationId": "post_api_auth_logout",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Datos del usuario en sesión y sus roles",
+        "operationId": "get_api_auth_me",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados": {
+      "get": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Listado paginado y filtrado, sin datos sensibles",
+        "operationId": "get_api_empleados",
+        "x-roles": "RR. HH., Jefe (su equipo)",
+        "parameters": [
+          {
+            "name": "departamento",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buscar",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Registra un empleado nuevo",
+        "operationId": "post_api_empleados",
+        "x-roles": "RR. HH.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}": {
+      "get": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Ficha del empleado, sin salario ni cuenta bancaria",
+        "operationId": "get_api_empleados_id",
+        "x-roles": "RR. HH., Jefe, propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Actualiza datos personales y laborales",
+        "operationId": "put_api_empleados_id",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}/estado": {
+      "patch": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Activa, suspende o da de baja al empleado",
+        "operationId": "patch_api_empleados_id_estado",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}/datos-sensibles": {
+      "get": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Salario y cuenta bancaria enmascarados; acceso auditado",
+        "operationId": "get_api_empleados_id_datos_sensibles",
+        "x-roles": "RR. HH., Admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}/contratos": {
+      "get": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Historial de contratos del empleado",
+        "operationId": "get_api_empleados_id_contratos",
+        "x-roles": "RR. HH., propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Empleados y contratos"
+        ],
+        "summary": "Crea un contrato y desactiva el anterior",
+        "operationId": "post_api_empleados_id_contratos",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/departamentos": {
+      "get": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Lista de departamentos",
+        "operationId": "get_api_departamentos",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Crea un departamento",
+        "operationId": "post_api_departamentos",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/departamentos/{id}": {
+      "put": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Edita nombre o responsable",
+        "operationId": "put_api_departamentos_id",
+        "x-roles": "Admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/cargos": {
+      "get": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Lista de cargos con su departamento",
+        "operationId": "get_api_cargos",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Crea un cargo y su salario base",
+        "operationId": "post_api_cargos",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/cargos/{id}": {
+      "put": {
+        "tags": [
+          "Departamentos y cargos"
+        ],
+        "summary": "Edita un cargo",
+        "operationId": "put_api_cargos_id",
+        "x-roles": "Admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/asistencia/marcas": {
+      "post": {
+        "tags": [
+          "Asistencia"
+        ],
+        "summary": "Registra entrada o salida desde web o kiosco",
+        "operationId": "post_api_asistencia_marcas",
+        "x-roles": "Empleado, Kiosco",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/asistencia": {
+      "get": {
+        "tags": [
+          "Asistencia"
+        ],
+        "summary": "Marcas por fecha o por empleado",
+        "operationId": "get_api_asistencia",
+        "x-roles": "RR. HH., Jefe",
+        "parameters": [
+          {
+            "name": "fecha",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "empleadoId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/asistencia/{id}": {
+      "put": {
+        "tags": [
+          "Asistencia"
+        ],
+        "summary": "Corrige una marca; la justificación es obligatoria",
+        "operationId": "put_api_asistencia_id",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/asistencia/resumen": {
+      "get": {
+        "tags": [
+          "Asistencia"
+        ],
+        "summary": "Horas trabajadas, tardanzas y ausencias",
+        "operationId": "get_api_asistencia_resumen",
+        "x-roles": "RR. HH., Jefe",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/tipos-ausencia": {
+      "get": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Catálogo de vacaciones, permisos e incapacidades",
+        "operationId": "get_api_tipos_ausencia",
+        "x-roles": "Autenticado",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}/saldo-vacaciones": {
+      "get": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Días asignados, usados y disponibles",
+        "operationId": "get_api_empleados_id_saldo_vacaciones",
+        "x-roles": "Propio, RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ausencias": {
+      "post": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Crea una solicitud y valida el saldo",
+        "operationId": "post_api_ausencias",
+        "x-roles": "Empleado",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Solicitudes filtradas por estado",
+        "operationId": "get_api_ausencias",
+        "x-roles": "RR. HH., Jefe, propio",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "empleadoId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ausencias/{id}/aprobacion": {
+      "patch": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Aprueba o rechaza con comentario",
+        "operationId": "patch_api_ausencias_id_aprobacion",
+        "x-roles": "Jefe directo, RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/ausencias/{id}": {
+      "delete": {
+        "tags": [
+          "Vacaciones y permisos"
+        ],
+        "summary": "Cancela una solicitud que aún está pendiente",
+        "operationId": "delete_api_ausencias_id",
+        "x-roles": "Propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/periodos": {
+      "get": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Periodos de nómina y su estado",
+        "operationId": "get_api_nomina_periodos",
+        "x-roles": "RR. HH.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Crea un periodo mensual o quincenal",
+        "operationId": "post_api_nomina_periodos",
+        "x-roles": "RR. HH.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/periodos/{id}/calcular": {
+      "post": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Genera los recibos del periodo",
+        "operationId": "post_api_nomina_periodos_id_calcular",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/periodos/{id}/cerrar": {
+      "post": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Cierra el periodo; ya no admite cambios",
+        "operationId": "post_api_nomina_periodos_id_cerrar",
+        "x-roles": "Admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/periodos/{id}/recibos": {
+      "get": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Recibos del periodo con sus totales",
+        "operationId": "get_api_nomina_periodos_id_recibos",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/recibos/{id}": {
+      "get": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Detalle de conceptos del recibo",
+        "operationId": "get_api_nomina_recibos_id",
+        "x-roles": "RR. HH., propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/recibos/{id}/pdf": {
+      "get": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Descarga del recibo en PDF",
+        "operationId": "get_api_nomina_recibos_id_pdf",
+        "x-roles": "RR. HH., propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/nomina/conceptos": {
+      "get": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Ingresos y descuentos configurados",
+        "operationId": "get_api_nomina_conceptos",
+        "x-roles": "RR. HH.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Nómina"
+        ],
+        "summary": "Crea o modifica un concepto de nómina",
+        "operationId": "post_api_nomina_conceptos",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/vacantes": {
+      "get": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Vacantes publicadas o cerradas",
+        "operationId": "get_api_vacantes",
+        "x-roles": "RR. HH.; público (solo publicadas)",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Crea una vacante ligada a un cargo",
+        "operationId": "post_api_vacantes",
+        "x-roles": "RR. HH.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/vacantes/{id}/estado": {
+      "patch": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Publica o cierra una vacante",
+        "operationId": "patch_api_vacantes_id_estado",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/vacantes/{id}/postulaciones": {
+      "post": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Recibe una postulación con su CV",
+        "operationId": "post_api_vacantes_id_postulaciones",
+        "x-roles": "Público",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Candidatos de la vacante agrupados por etapa",
+        "operationId": "get_api_vacantes_id_postulaciones",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/postulaciones/{id}/etapa": {
+      "patch": {
+        "tags": [
+          "Reclutamiento"
+        ],
+        "summary": "Avanza al candidato de etapa o lo descarta",
+        "operationId": "patch_api_postulaciones_id_etapa",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/evaluaciones": {
+      "get": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Evaluaciones por empleado o por periodo",
+        "operationId": "get_api_evaluaciones",
+        "x-roles": "RR. HH., Jefe",
+        "parameters": [
+          {
+            "name": "empleadoId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Registra una evaluación de desempeño",
+        "operationId": "post_api_evaluaciones",
+        "x-roles": "Jefe directo",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/empleados/{id}/evaluaciones": {
+      "get": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Historial de evaluaciones del empleado",
+        "operationId": "get_api_empleados_id_evaluaciones",
+        "x-roles": "RR. HH., Jefe, propio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reportes/headcount": {
+      "get": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Empleados activos por departamento y cargo",
+        "operationId": "get_api_reportes_headcount",
+        "x-roles": "RR. HH., Admin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reportes/asistencia": {
+      "get": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Asistencia en JSON, xlsx o pdf",
+        "operationId": "get_api_reportes_asistencia",
+        "x-roles": "RR. HH., Jefe",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "formato",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reportes/nomina": {
+      "get": {
+        "tags": [
+          "Evaluaciones y reportes"
+        ],
+        "summary": "Resumen de nómina por periodo",
+        "operationId": "get_api_reportes_nomina",
+        "x-roles": "RR. HH.",
+        "parameters": [
+          {
+            "name": "periodoId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "formato",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/usuarios": {
+      "get": {
+        "tags": [
+          "Usuarios, roles y auditoría"
+        ],
+        "summary": "Usuarios del sistema",
+        "operationId": "get_api_usuarios",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Usuarios, roles y auditoría"
+        ],
+        "summary": "Crea un usuario, vinculado o no a un empleado",
+        "operationId": "post_api_usuarios",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/usuarios/{id}/roles": {
+      "patch": {
+        "tags": [
+          "Usuarios, roles y auditoría"
+        ],
+        "summary": "Asigna o quita roles",
+        "operationId": "patch_api_usuarios_id_roles",
+        "x-roles": "Admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/roles": {
+      "get": {
+        "tags": [
+          "Usuarios, roles y auditoría"
+        ],
+        "summary": "Catálogo de roles",
+        "operationId": "get_api_roles",
+        "x-roles": "Admin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auditoria": {
+      "get": {
+        "tags": [
+          "Usuarios, roles y auditoría"
+        ],
+        "summary": "Bitácora de cambios y accesos a datos sensibles",
+        "operationId": "get_api_auditoria",
+        "x-roles": "Admin",
+        "parameters": [
+          {
+            "name": "entidad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "usuarioId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Rol sin permiso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Autenticación"
+    },
+    {
+      "name": "Empleados y contratos"
+    },
+    {
+      "name": "Departamentos y cargos"
+    },
+    {
+      "name": "Asistencia"
+    },
+    {
+      "name": "Vacaciones y permisos"
+    },
+    {
+      "name": "Nómina"
+    },
+    {
+      "name": "Reclutamiento"
+    },
+    {
+      "name": "Evaluaciones y reportes"
+    },
+    {
+      "name": "Usuarios, roles y auditoría"
+    }
+  ]
+}

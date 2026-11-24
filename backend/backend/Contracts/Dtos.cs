@@ -4,7 +4,7 @@ public record LoginRequest(string Correo, string Password);
 public record RefreshRequest(string RefreshToken);
 public record TokenResponse(string AccessToken, string RefreshToken, DateTime ExpiraUtc);
 
-public record EmpleadoRequest(string Codigo, string Cedula, string Nombres, string Apellidos,
+public record EmpleadoRequest(string Codigo, string? Cedula, string Nombres, string Apellidos,
     DateOnly FechaNacimiento, string Correo, int IdDepartamento, int IdCargo, DateOnly FechaIngreso);
 public record EstadoEmpleadoRequest(string Estado);
 public record ContratoRequest(string Tipo, DateOnly FechaInicio, DateOnly? FechaFin, decimal Salario);

@@ -122,6 +122,26 @@ public class NominaController(AppDbContext db, CryptoService crypto, AuditServic
                 r.SalarioNeto
             }).ToListAsync());
 
+    /// Recibos del empleado en sesión (para el rol Empleado).
+    [HttpGet("mis-recibos")]
+    public async Task<IActionResult> MisRecibos()
+    {
+        if (EmpleadoId is not int yo) return Ok(Array.Empty<object>());
+        return Ok(await db.RecibosNomina.Where(r => r.IdEmpleado == yo)
+            .OrderByDescending(r => r.Periodo.Anio).ThenByDescending(r => r.Periodo.Mes)
+            .Select(r => new
+            {
+                r.IdRecibo,
+                r.IdPeriodo,
+                Anio = r.Periodo.Anio,
+                Mes = r.Periodo.Mes,
+                r.SalarioBruto,
+                r.TotalIngresos,
+                r.TotalDescuentos,
+                r.SalarioNeto
+            }).ToListAsync());
+    }
+
     [HttpGet("recibos/{id:long}")]
     public async Task<IActionResult> Recibo(long id)
     {

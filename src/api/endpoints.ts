@@ -38,8 +38,9 @@ export const asistenciaApi = {
 export const ausenciasApi = {
   list: (params: { estado?: string; empleadoId?: number }) => d(api.get('/api/ausencias', { params })),
   create: (body: any) => d(api.post('/api/ausencias', body)),
+  // La API espera { decision: 'Aprobar' | 'Rechazar', comentario }.
   decidir: (id: number, aprobada: boolean, comentario: string) =>
-    d(api.patch(`/api/ausencias/${id}/aprobacion`, { aprobada, comentario })),
+    d(api.patch(`/api/ausencias/${id}/aprobacion`, { decision: aprobada ? 'Aprobar' : 'Rechazar', comentario })),
   cancelar: (id: number) => d(api.delete(`/api/ausencias/${id}`)),
 };
 
@@ -49,6 +50,7 @@ export const nominaApi = {
   calcular: (id: number) => d(api.post(`/api/nomina/periodos/${id}/calcular`)),
   cerrar: (id: number) => d(api.post(`/api/nomina/periodos/${id}/cerrar`)),
   recibos: (id: number) => d(api.get(`/api/nomina/periodos/${id}/recibos`)),
+  misRecibos: () => d(api.get('/api/nomina/mis-recibos')),
   recibo: (id: number) => d(api.get(`/api/nomina/recibos/${id}`)),
   // Devuelve un Blob para poder descargarlo con el token en la cabecera.
   reciboPdf: (id: number) => api.get(`/api/nomina/recibos/${id}/pdf`, { responseType: 'blob' }).then((r) => r.data as Blob),
@@ -62,4 +64,11 @@ export const reclutamientoApi = {
 
 export const reportesApi = {
   headcount: () => d(api.get('/api/reportes/headcount')),
+  asistencia: (desde: string, hasta: string) => d(api.get('/api/reportes/asistencia', { params: { desde, hasta } })),
+  nomina: (periodoId: number) => d(api.get('/api/reportes/nomina', { params: { periodoId } })),
+};
+
+export const evaluacionesApi = {
+  list: (params: { empleadoId?: number; periodo?: string }) => d(api.get('/api/evaluaciones', { params })),
+  create: (body: any) => d(api.post('/api/evaluaciones', body)),
 };

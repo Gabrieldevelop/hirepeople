@@ -24,7 +24,11 @@ public class EvaluacionesController(AppDbContext db, AuditService audit) : ApiCo
 
         return Ok(await q.OrderByDescending(x => x.Fecha).Select(x => new
         {
-            x.IdEvaluacion, x.IdEmpleado, x.IdEvaluador, x.Periodo, x.Puntaje, x.Comentarios, x.Fecha
+            x.IdEvaluacion, x.IdEmpleado,
+            Empleado = x.Empleado.Nombres + " " + x.Empleado.Apellidos,
+            x.IdEvaluador,
+            Evaluador = x.Evaluador.Nombres + " " + x.Evaluador.Apellidos,
+            x.Periodo, x.Puntaje, x.Comentarios, x.Fecha
         }).ToListAsync());
     }
 

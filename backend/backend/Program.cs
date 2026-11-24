@@ -68,6 +68,19 @@ if (args.Length >= 3 && args[0] == "create-admin")
     return;
 }
 
+// Uso: dotnet run -- seed-demo
+// Inserta datos ficticios (empleados, asistencia, ausencias, nómina, reclutamiento) para demostración.
+if (args.Length >= 1 && args[0] == "seed-demo")
+{
+    using var scope = app.Services.CreateScope();
+    var mensaje = await Rrhh.Infrastructure.DemoData.SembrarAsync(
+        scope.ServiceProvider.GetRequiredService<AppDbContext>(),
+        scope.ServiceProvider.GetRequiredService<CryptoService>(),
+        scope.ServiceProvider.GetRequiredService<PasswordService>());
+    Console.WriteLine(mensaje);
+    return;
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

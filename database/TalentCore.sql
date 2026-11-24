@@ -117,7 +117,7 @@ CREATE TABLE dbo.Evaluaciones (
     CONSTRAINT PK_Evaluaciones PRIMARY KEY (id_evaluacion),
     CONSTRAINT FK_Evaluaciones_Empleado  FOREIGN KEY (id_empleado)  REFERENCES dbo.Empleados (id_empleado),
     CONSTRAINT FK_Evaluaciones_Evaluador FOREIGN KEY (id_evaluador) REFERENCES dbo.Empleados (id_empleado),
-    CONSTRAINT CK_Evaluaciones_puntaje CHECK (puntaje >= 0),
+    CONSTRAINT CK_Evaluaciones_puntaje CHECK (puntaje BETWEEN 0 AND 5),
     CONSTRAINT CK_Evaluaciones_distinto CHECK (id_empleado <> id_evaluador)
 );
 GO
@@ -134,7 +134,8 @@ CREATE TABLE dbo.RegistroAsistencia (
     hora_salida      TIME(0)        NULL,
     horas_trabajadas DECIMAL(5,2)   NULL,
     origen           VARCHAR(20)    NOT NULL,       -- p. ej. Web, Kiosco, Manual
-    estado           VARCHAR(20)    NOT NULL,
+    estado           VARCHAR(20)    NOT NULL,       -- Puntual / Tardanza / Ausente
+    justificacion    NVARCHAR(500)  NULL,           -- obligatoria al corregir una marca (PUT /api/asistencia/{id})
     CONSTRAINT PK_RegistroAsistencia PRIMARY KEY (id_registro),
     CONSTRAINT FK_RegistroAsistencia_Empleados FOREIGN KEY (id_empleado) REFERENCES dbo.Empleados (id_empleado),
     CONSTRAINT CK_RegistroAsistencia_horas CHECK (hora_salida IS NULL OR hora_entrada IS NULL OR hora_salida >= hora_entrada),
@@ -216,11 +217,11 @@ CREATE TABLE dbo.ConceptosNomina (
     id_concepto   INT           IDENTITY(1,1) NOT NULL,
     nombre        VARCHAR(80)   NOT NULL,
     tipo          VARCHAR(10)   NOT NULL,           -- Ingreso / Descuento
-    porcentaje    DECIMAL(5,2)  NULL,
+    porcentaje    DECIMAL(5,2)  NOT NULL CONSTRAINT DF_ConceptosNomina_porcentaje DEFAULT (0),
     es_obligatorio BIT          NOT NULL CONSTRAINT DF_ConceptosNomina_oblig DEFAULT (0),
     CONSTRAINT PK_ConceptosNomina PRIMARY KEY (id_concepto),
     CONSTRAINT UQ_ConceptosNomina_nombre UNIQUE (nombre),
-    CONSTRAINT CK_ConceptosNomina_porcentaje CHECK (porcentaje IS NULL OR porcentaje BETWEEN 0 AND 100)
+    CONSTRAINT CK_ConceptosNomina_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
 );
 GO
 
@@ -260,8 +261,8 @@ CREATE TABLE dbo.Vacantes (
     id_cargo          INT            NOT NULL,
     titulo            VARCHAR(150)   NOT NULL,
     descripcion       NVARCHAR(MAX)  NULL,
-    fecha_publicacion DATE           NOT NULL CONSTRAINT DF_Vacantes_fecha DEFAULT (CAST(SYSUTCDATETIME() AS DATE)),
-    estado            VARCHAR(20)    NOT NULL CONSTRAINT DF_Vacantes_estado DEFAULT ('Abierta'),
+    fecha_publicacion DATE           NULL,          -- NULL mientras la vacante esta en Borrador
+    estado            VARCHAR(20)    NOT NULL CONSTRAINT DF_Vacantes_estado DEFAULT ('Borrador'),  -- Borrador / Publicada / Cerrada
     CONSTRAINT PK_Vacantes PRIMARY KEY (id_vacante),
     CONSTRAINT FK_Vacantes_Cargos FOREIGN KEY (id_cargo) REFERENCES dbo.Cargos (id_cargo)
 );

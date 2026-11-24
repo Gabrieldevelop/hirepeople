@@ -66,6 +66,7 @@ public class AsistenciaController(AppDbContext db, AuditService audit) : ApiCont
             r.IdRegistro,
             r.IdEmpleado,
             Empleado = r.Empleado.Nombres + " " + r.Empleado.Apellidos,
+            Departamento = r.Empleado.Departamento.Nombre,
             r.Fecha,
             r.HoraEntrada,
             r.HoraSalida,

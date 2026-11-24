@@ -50,13 +50,14 @@ public class AuthController(AppDbContext db, PasswordService pwd, TokenService t
     [Authorize]
     public async Task<IActionResult> Me()
     {
-        var usuario = await db.Usuarios.Include(x => x.Roles).ThenInclude(ur => ur.Rol)
+        var usuario = await db.Usuarios.Include(x => x.Roles).ThenInclude(ur => ur.Rol).Include(x => x.Empleado)
             .FirstOrDefaultAsync(x => x.IdUsuario == UsuarioId);
         if (usuario is null) return NotFound();
         return Ok(new
         {
             usuario.IdUsuario,
             usuario.IdEmpleado,
+            Nombre = usuario.Empleado is null ? usuario.Correo : $"{usuario.Empleado.Nombres} {usuario.Empleado.Apellidos}",
             usuario.Correo,
             Roles = usuario.Roles.Select(ur => ur.Rol.Nombre)
         });

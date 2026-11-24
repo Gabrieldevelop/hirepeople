@@ -38,6 +38,7 @@ public class EmpleadosController(AppDbContext db, CryptoService crypto, AuditSer
         {
             total,
             pagina,
+            totalPaginas = Math.Max(1, (int)Math.Ceiling(total / (double)TamPagina)),
             items = items.Select(e => new
             {
                 e.IdEmpleado,
@@ -73,6 +74,8 @@ public class EmpleadosController(AppDbContext db, CryptoService crypto, AuditSer
     [Authorize(Roles = "RRHH,Admin")]
     public async Task<IActionResult> Crear([FromBody] EmpleadoRequest r)
     {
+        if (string.IsNullOrWhiteSpace(r.Cedula))
+            return BadRequest(new { mensaje = "La cédula es obligatoria." });
         if (await db.Empleados.AnyAsync(x => x.Codigo == r.Codigo))
             return Conflict(new { mensaje = "El código de empleado ya existe." });
         if (!await db.Departamentos.AnyAsync(d => d.IdDepartamento == r.IdDepartamento) ||
